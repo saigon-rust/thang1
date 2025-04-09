@@ -7,8 +7,8 @@
 #define MAX_PATTERNS 10000
 #define MAX_TYPES 10
 
-double min_du_allowed = 0;
-double max_du_allowed = 0.5;
+double min_du_allowed = 0.5;
+double max_du_allowed = 1;
 
 typedef struct {
     float length;
@@ -21,7 +21,7 @@ Demand demands[] = {
     {1.05, 281},
     {0.9, 336},
     {6.95, 336},
-    {11.21, 336},
+    {11, 336},
     {11.3, 100},
 };
 
