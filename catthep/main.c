@@ -50,7 +50,7 @@ void print_pattern(CutPattern *p) {
     printf("=> Tổng: %.3fm, Dư: %.3fm\n", p->total, p->du);
 }
 
-int is_effective_pattern(int counts[]) {
+int is_effective_pattern(int counts[], double du) {
     int large_count = 0, small_count = 0, small_index =0;
 
     for (int i = 0; i < numDemands; i++) {
@@ -60,7 +60,16 @@ int is_effective_pattern(int counts[]) {
     }
 
     // Ưu tiên mẫu có 1 thanh lớn + 1 thanh nhỏ
-    if (large_count == 1 && small_count <= 1) return 1;
+    if (large_count == 1 && small_count == 0) {
+        if (du > 1.3) return 0;
+        else return 1;
+    }
+    // Ưu tiên mẫu có 1 thanh lớn + 1 thanh nhỏ
+    if (large_count == 1 && small_count == 1) {
+        if (du > 1.3) return 0;
+        else return 1;
+    }
+    if (large_count == 1 && small_count == 2) return 1;
 
     // Cho phép mẫu chỉ có thanh nhỏ
     if (small_count == 1 && large_count == 0) return 1;
@@ -72,7 +81,7 @@ void save_pattern(int counts[], double total) {
     double du = MAX_TOTAL_LENGTH - total;
     if (du < min_du_allowed || du > max_du_allowed) return;
 
-    if (!is_effective_pattern(counts)) return;
+    if (!is_effective_pattern(counts, du)) return;
 
     if (pattern_count >= MAX_PATTERNS) return;
 
@@ -130,9 +139,11 @@ void optimize_cutting() {
         int best_pattern = -1;
         double best_efficiency = -1.0;
 
-        for (int i = 0; i < pattern_count; i++) {
-            double current_efficiency = 0.0;
+                for (int i = 0; i < pattern_count; i++) {
             int possible = 1;
+            int will_fulfill_any = 0;
+            double current_efficiency = 0.0;
+
             for (int j = 0; j < patterns[i].num_items; j++) {
                 int idx = patterns[i].pattern_indices[j];
                 int qty = patterns[i].pattern_quantities[j];
@@ -140,27 +151,32 @@ void optimize_cutting() {
                     possible = 0;
                     break;
                 }
+                if (qty == remaining[idx]) {
+                    will_fulfill_any = 1;
+                }
             }
 
-            if (possible) {
-                int covered_length_this_pattern = 0;
-                for (int j = 0; j < patterns[i].num_items; j++) {
-                    int idx = patterns[i].pattern_indices[j];
-                    int qty = patterns[i].pattern_quantities[j];
-                    covered_length_this_pattern += qty * demands[idx].length;
-                }
-                current_efficiency = covered_length_this_pattern / MAX_TOTAL_LENGTH;
+            if (!possible) continue;
 
-                if (current_efficiency > best_efficiency) {
-                    best_efficiency = current_efficiency;
-                    best_pattern = i;
-                } else if (fabs(current_efficiency - best_efficiency) < 1e-6) {
-                    if (patterns[i].du < patterns[best_pattern].du) {
-                        best_pattern = i;
-                    }
-                }
+            double covered_length = 0.0;
+            for (int j = 0; j < patterns[i].num_items; j++) {
+                int idx = patterns[i].pattern_indices[j];
+                int qty = patterns[i].pattern_quantities[j];
+                covered_length += qty * demands[idx].length;
+            }
+
+            current_efficiency = covered_length / MAX_TOTAL_LENGTH;
+
+            // Ưu tiên mẫu giúp cắt xong 1 loại
+            if (will_fulfill_any && current_efficiency >= best_efficiency) {
+                best_efficiency = current_efficiency + 0.01;  // Thêm điểm ưu tiên nhẹ
+                best_pattern = i;
+            } else if (current_efficiency > best_efficiency) {
+                best_efficiency = current_efficiency;
+                best_pattern = i;
             }
         }
+
 
         if (best_pattern == -1) break;
 
