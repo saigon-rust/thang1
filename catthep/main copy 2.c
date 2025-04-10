@@ -102,7 +102,19 @@ void search(int index, int counts[], double total, CutPattern *current_pattern) 
     }
 }
 
+void sort_demands_desc() {
+    for (int i = 0; i < numDemands - 1; i++) {
+        for (int j = i + 1; j < numDemands; j++) {
+            if (demands[i].length < demands[j].length) {
+                Demand temp = demands[i];
+                demands[i] = demands[j];
+                demands[j] = temp;
+            }
+        }
+    }
+}
 int main() {
+    sort_demands_desc()
     n_demand_types = sizeof(demands) / sizeof(demands[0]);
     qsort(demands, numDemands, sizeof(Demand), compareDemands);
 

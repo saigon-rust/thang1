@@ -7,8 +7,8 @@
 #define MAX_PATTERNS 10000
 #define MAX_TYPES 10
 
-double min_du_allowed = 0.5;
-double max_du_allowed = 1;
+double min_du_allowed = 0;
+double max_du_allowed = 11.7;
 
 typedef struct {
     float length;
@@ -17,12 +17,11 @@ typedef struct {
 
 Demand demands[] = {
     {8, 336},
-    {1.302, 281},
-    {1.05, 281},
-    {0.9, 336},
+    {1.3, 5000},
+    {1.05, 28},
+    {0.9, 10},
     {6.95, 336},
     {11, 336},
-    {11.3, 100},
 };
 
 int numDemands = sizeof(demands) / sizeof(demands[0]);
@@ -51,9 +50,29 @@ void print_pattern(CutPattern *p) {
     printf("=> Tổng: %.3fm, Dư: %.3fm\n", p->total, p->du);
 }
 
+int is_effective_pattern(int counts[]) {
+    int large_count = 0, small_count = 0, small_index =0;
+
+    for (int i = 0; i < numDemands; i++) {
+        if (counts[i] == 0) continue;
+        if (demands[i].length >= 6.9) large_count++;
+        else small_count++;
+    }
+
+    // Ưu tiên mẫu có 1 thanh lớn + 1 thanh nhỏ
+    if (large_count == 1 && small_count <= 1) return 1;
+
+    // Cho phép mẫu chỉ có thanh nhỏ
+    if (small_count == 1 && large_count == 0) return 1;
+
+    return 0;
+}
+
 void save_pattern(int counts[], double total) {
     double du = MAX_TOTAL_LENGTH - total;
     if (du < min_du_allowed || du > max_du_allowed) return;
+
+    if (!is_effective_pattern(counts)) return;
 
     if (pattern_count >= MAX_PATTERNS) return;
 
@@ -72,6 +91,7 @@ void save_pattern(int counts[], double total) {
     pattern_count++;
 }
 
+
 void search(int index, int counts[], double total) {
     if (total > MAX_TOTAL_LENGTH) return;
 
@@ -80,7 +100,8 @@ void search(int index, int counts[], double total) {
         return;
     }
 
-    for (int i = 0; i <= MAX_COUNT; i++) {
+    // Giới hạn số lượng mỗi loại theo yêu cầu tối đa
+    for (int i = 0; i <= demands[index].quantity; i++) {
         counts[index] = i;
         search(index + 1, counts, total + i * demands[index].length);
     }
@@ -95,6 +116,8 @@ int is_enough(int required[], int used[], int size) {
 
 void optimize_cutting() {
     int remaining[MAX_TYPES];
+    int cut_total[MAX_TYPES] = {0};
+
     for (int i = 0; i < numDemands; i++) {
         remaining[i] = demands[i].quantity;
     }
@@ -105,20 +128,37 @@ void optimize_cutting() {
 
     while (1) {
         int best_pattern = -1;
-        int best_covered = 0;
+        double best_efficiency = -1.0;
 
         for (int i = 0; i < pattern_count; i++) {
-            int cover = 0;
+            double current_efficiency = 0.0;
+            int possible = 1;
             for (int j = 0; j < patterns[i].num_items; j++) {
                 int idx = patterns[i].pattern_indices[j];
                 int qty = patterns[i].pattern_quantities[j];
-                if (remaining[idx] > 0) {
-                    cover += (remaining[idx] < qty) ? remaining[idx] : qty;
+                if (qty > remaining[idx]) {
+                    possible = 0;
+                    break;
                 }
             }
-            if (cover > best_covered) {
-                best_covered = cover;
-                best_pattern = i;
+
+            if (possible) {
+                int covered_length_this_pattern = 0;
+                for (int j = 0; j < patterns[i].num_items; j++) {
+                    int idx = patterns[i].pattern_indices[j];
+                    int qty = patterns[i].pattern_quantities[j];
+                    covered_length_this_pattern += qty * demands[idx].length;
+                }
+                current_efficiency = covered_length_this_pattern / MAX_TOTAL_LENGTH;
+
+                if (current_efficiency > best_efficiency) {
+                    best_efficiency = current_efficiency;
+                    best_pattern = i;
+                } else if (fabs(current_efficiency - best_efficiency) < 1e-6) {
+                    if (patterns[i].du < patterns[best_pattern].du) {
+                        best_pattern = i;
+                    }
+                }
             }
         }
 
@@ -128,19 +168,35 @@ void optimize_cutting() {
         for (int j = 0; j < p->num_items; j++) {
             int idx = p->pattern_indices[j];
             int qty = p->pattern_quantities[j];
-            remaining[idx] -= (remaining[idx] < qty) ? remaining[idx] : qty;
+            remaining[idx] -= qty;
+            cut_total[idx] += qty;
         }
 
         used_patterns[best_pattern]++;
         total_bars++;
         total_du += p->du;
+
+        // Kiểm tra nếu đã cắt đủ
+        int all_satisfied = 1;
+        for (int i = 0; i < numDemands; i++) {
+            if (remaining[i] > 0) {
+                all_satisfied = 0;
+                break;
+            }
+        }
+        if (all_satisfied) break;
     }
 
-    
+    printf("\n📦 Số lượng thép yêu cầu:\n");
+    for (int i = 0; i < numDemands; i++) {
+        printf("  - %.3fm: %d thanh\n", demands[i].length, demands[i].quantity);
+    }
+
+
     printf("\n📋 Chi tiết kế hoạch cắt:\n");
     for (int i = 0; i < pattern_count; i++) {
         if (used_patterns[i] > 0) {
-            printf("   - %d cây:", used_patterns[i]);
+            printf("  - %d cây:", used_patterns[i]);
             for (int j = 0; j < patterns[i].num_items; j++) {
                 int idx = patterns[i].pattern_indices[j];
                 printf(" %d x %.2fm,", patterns[i].pattern_quantities[j], demands[idx].length);
@@ -148,8 +204,15 @@ void optimize_cutting() {
             printf(" => Tổng: %.3fm, Dư: %.3fm\n", patterns[i].total, patterns[i].du);
         }
     }
-    printf("\n✅ Tổng số cây thép sử dụng: %d\n", total_bars);
-    printf("🔹 Tỷ lệ hao hụt: %.2f%%\n", (total_du/total_bars/11.7) * 100.0);
+
+    printf("\n📦 Số lượng thép (đã cắt/yêu cầu):\n");
+    for (int i = 0; i < numDemands; i++) {
+        printf("  - %.3fm: %d / %d thanh\n", demands[i].length, cut_total[i], demands[i].quantity);
+    }
+
+
+    printf("\n✅ Tổng số thép sử dụng: %d cây 11.7m\n", total_bars);
+    printf("🔹 Tỷ lệ hao hụt: %.2f%%\n", (total_du / (total_bars * MAX_TOTAL_LENGTH)) * 100.0);
 
     // Kiểm tra phần còn lại
     int total_remaining = 0;
@@ -160,7 +223,7 @@ void optimize_cutting() {
     if (total_remaining == 0) {
         printf("\n🎉 Đã cắt hết tất cả yêu cầu.\n");
     } else {
-        printf("\n⚠️ Còn lại %d thanh không thể cắt với các mẫu đã sinh:\n", total_remaining);
+        printf("\n⚠️ Còn lại %d thanh:\n", total_remaining);
         for (int i = 0; i < numDemands; i++) {
             if (remaining[i] > 0) {
                 printf("  - %d x %.2fm\n", remaining[i], demands[i].length);
@@ -169,7 +232,20 @@ void optimize_cutting() {
     }
 }
 
+void sort_demands_desc() {
+    for (int i = 0; i < numDemands - 1; i++) {
+        for (int j = i + 1; j < numDemands; j++) {
+            if (demands[i].length < demands[j].length) {
+                Demand temp = demands[i];
+                demands[i] = demands[j];
+                demands[j] = temp;
+            }
+        }
+    }
+}
+
 int main() {
+    sort_demands_desc();
     double min_length = MAX_TOTAL_LENGTH;
     for (int i = 0; i < numDemands; i++) {
         if (demands[i].length < min_length)
@@ -190,6 +266,7 @@ int main() {
     }
 
     optimize_cutting();
+
 
     return 0;
 }
