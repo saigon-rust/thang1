@@ -1,3 +1,3 @@
 all:
-	g++ san.cpp -o main
+	g++ setpoint.cpp -o main
 	./main
