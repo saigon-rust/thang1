@@ -1,3 +1,3 @@
 all:
-	g++ main2.cpp -o main
+	g++ san.cpp -o main
 	./main

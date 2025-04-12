@@ -4,8 +4,6 @@
 #include <vector>
 #include <iomanip>
 
-namespace san {
-
 struct PhuongAnThep {
     int duongKinh;
     int soThanhTrenMet;
@@ -22,7 +20,7 @@ struct PhuongAnThep {
 };
 
 PhuongAnThep goi_y_duong_kinh_thep(double As_yeu_cau) {
-    std::vector<int> danhSachDuongKinh = {8, 10, 12, 14, 16, 18, 20};
+    std::vector<int> danhSachDuongKinh = {10, 12, 14, 16, 18, 20};
     for (int d : danhSachDuongKinh) {
         double A1 = (M_PI * d * d) / 4.0;
         int n = std::ceil(As_yeu_cau / A1);
@@ -39,8 +37,13 @@ PhuongAnThep goi_y_duong_kinh_thep(double As_yeu_cau) {
 }
 
 class San {
+private:
+    double Lx, Ly;
+
 public:
-    double tinh_chieu_day_san(double Lx, double Ly) {
+    San(double Lx_in, double Ly_in) : Lx(Lx_in), Ly(Ly_in) {}
+
+    double tinh_chieu_day_san() {
         int loaiSan;
         std::cout << "\nChọn loại sàn:\n"
                      "1. Sàn kê 4 cạnh (2 phương)\n"
@@ -50,7 +53,7 @@ public:
         std::cin >> loaiSan;
 
         double L = std::min(Lx, Ly);
-        double h = 0.12; // tối thiểu
+        double h = 0.12; // m - chiều dày tối thiểu
 
         switch (loaiSan) {
             case 1: h = L / 35.0; break;
@@ -74,15 +77,15 @@ public:
         }
 
         if (h < 0.12) h = 0.12;
-        h = std::ceil(h * 1000) / 1000; // làm tròn mm
+        h = std::ceil(h * 1000) / 1000.0;
         std::cout << "➡️  Chiều dày sàn đề xuất: " << h << " m (" << h * 1000 << " mm)\n";
         return h;
     }
 
-    double tai_san_m2(double h_san) {
+    double tinh_tai_trong_san(double h_san) {
         int loaiCT;
-        const double g2 = 2.0;
-        const double lbt = 25.0; // kN/m³
+        const double g2 = 2.0; // tải hoàn thiện, trần
+        const double lbt = 25.0; // kN/m3
         double g1 = lbt * h_san;
         double qsd = 2.0;
 
@@ -108,7 +111,7 @@ public:
         return q;
     }
 
-    void tai_san_len_dam(double Lx, double Ly, double q) {
+    void tinh_tai_len_dam(double q) {
         double Q = q * Lx * Ly;
         double q_ngan = q * Lx / 2.0;
         double q_dai = q * Ly / 2.0;
@@ -118,7 +121,7 @@ public:
         std::cout << "🔸 Tải lên dầm DÀI:  " << q_dai << " kN/m\n";
     }
 
-    void tinh_thep_san(double Lx, double Ly, double h_san, double q) {
+    void tinh_thep_san(double h_san, double q) {
         double tyLe = Lx / Ly;
         double alpha_nhip = 0.045;
 
@@ -129,30 +132,27 @@ public:
         double M = alpha_nhip * q * Lx * Lx;
         std::cout << "→ Mô men uốn giữa nhịp: " << M << " kNm\n";
 
-        double R = 210; // MPa = N/mm²
-        double h0 = h_san * 1000 - 20;
+        double R = 210; // MPa
+        double h0 = h_san * 1000 - 20; // mm
         double As = (M * 1e6) / (R * h0); // mm²/m
 
         std::cout << "➡️  Diện tích cốt thép yêu cầu As: " << std::ceil(As) << " mm²/m\n";
-        san::PhuongAnThep phuongAn = goi_y_duong_kinh_thep(As);
+        PhuongAnThep phuongAn = goi_y_duong_kinh_thep(As);
         phuongAn.hien_thi();
     }
-
 };
 
-} // namespace san
-
 int main() {
-    san::San s;
     double Lx, Ly;
-
     std::cout << "Nhập chiều dài sàn Lx (m): "; std::cin >> Lx;
     std::cout << "Nhập chiều rộng sàn Ly (m): "; std::cin >> Ly;
 
-    double h = s.tinh_chieu_day_san(Lx, Ly);
-    double q = s.tai_san_m2(h);
-    s.tai_san_len_dam(Lx, Ly, q);
-    s.tinh_thep_san(Lx, Ly, h, q);
+    San san(Lx, Ly);
+
+    double h_san = san.tinh_chieu_day_san();
+    double q = san.tinh_tai_trong_san(h_san);
+    san.tinh_tai_len_dam(q);
+    san.tinh_thep_san(h_san, q);
 
     return 0;
 }

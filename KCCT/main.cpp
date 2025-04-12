@@ -333,11 +333,12 @@ int main() {
     std::cin >> Bt;
     double Rb = Rb_value(Bt);
 
+    double h, b;
     std::cout << "\nNhap vao chieu cao h (mm): ";
     std::cin >> h;
     std::cout << "Nhap vao chieu rong b (mm): ";
     std::cin >> b;
-    double W = W_value(double h, double b);
+    double W = W_value(h, b);
 
 
     double Mcp = Mcp_value(Rb, W); // đơn vị N.mm
