@@ -1,3 +1,3 @@
 all:
-	g++ tinhthepdam.cpp -o main
+	g++ main.cpp -o main
 	./main
