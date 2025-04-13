@@ -191,16 +191,16 @@ double As_value_(double Rb, double Rt, double h, double b) {
 
 class AsCalculator {
     public:
-        double Rt;   // Cường độ chịu kéo của thép (MPa)
+        double Rs;   // Cường độ chịu kéo của thép (MPa)
         double M;    // Mô men uốn (kNm)
         double h0;   // Chiều cao làm việc (mm)
         double j;    // Hệ số đòn bẩy (thường ≈ 0.9)
         double As;   // Kết quả diện tích cốt thép (mm^2)
 
-        AsCalculator(double M_in, double Rt_in, double h0_in, double j_in = 0.9)
-            : M(M_in), Rt(Rt_in), h0(h0_in), j(j_in)
+        AsCalculator(double M_in, double Rs_in, double h0_in, double j_in = 0.9)
+            : M(M_in), Rs(Rs_in), h0(h0_in), j(j_in)
         {
-            As = (M) / (Rt * j * h0);  // M đơn vị kNm → N.mm
+            As = (M) / (Rs * j * h0);  // M đơn vị kNm → N.mm
         }
 
         void printValues() const {
@@ -346,13 +346,13 @@ int main() {
     std::string Ct;
     std::cout << "Nhap vao CT: (CB300, CB400): ";
     std::cin >> Ct;
-    double Rt = Rt_value(Ct);
+    double Rs = Rt_value(Ct);
 
     MomentCalculator mc;
     mc.nhapDuLieu();
     double Mmax = mc.tinhMmax() * 1e6;
 
-    double As = As_value(Mmax, Rt, h-25);
+    double As = As_value(Mmax, Rs, h-25);
     std::cout << "Tiết diện thép As =  " << As << std::endl;
     suggestSteel(As);
 
@@ -367,7 +367,7 @@ int main() {
     // 6. Tong hop thong tin
     std::cout << "\n=== TONG HOP ===\n";
     std::cout << "Vat lieu be tong: " << Bt << ", Rb = " << Rb << " MPa\n";
-    std::cout << "Vat lieu thep: " << Ct << ", Rt = " << Rt << " MPa\n";
+    std::cout << "Vat lieu thep: " << Ct << ", Rt = " << Rs << " MPa\n";
     std::cout << "Kich thuoc dam: b = " << b << " mm, h = " << h << " mm\n";
     std::cout << "Kich thuoc dam: b = " << b << " mm, h = " << h << " mm\n";
     std::cout << "Mcp = " << Mcp << " N.mm, Mmax = " << Mmax << " N.mm\n";
