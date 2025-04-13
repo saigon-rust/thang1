@@ -1,153 +1,99 @@
 #include <iostream>
-#include <algorithm> // std::min, std::max
+#include <algorithm>
 
-class San {
+#include <iomanip>
+#include <vector>
+#include <cmath>
+
+class PhuongAnThep {
 private:
-    double Lx, Ly;   // Kích thước sàn (m)
-    double q;        // Tải trọng sàn (kN/m2)
+    int duongKinh;           // ∅ thép
+    int soThanhTrenMet;      // số thanh / mét
+    double khoangCach;       // mm
+    double AsCungCap;        // mm²/m
 
 public:
-    San(double Lx_in, double Ly_in, double q_in = 25 * 0.12 + 2 + 2)
-        : Lx(Lx_in), Ly(Ly_in), q(q_in) {}
+    PhuongAnThep() : duongKinh(0), soThanhTrenMet(0), khoangCach(0), AsCungCap(0) {}
 
-    double tinh_hsan() {
-        double h = 0;
-        double Lmin = std::min(Lx, Ly);
-        char lua_chon;
-        int loaiSan;
+    bool goiY(double As_yeu_cau) {
+        std::vector<int> danhSachDuongKinh = {10, 12, 14, 16, 18, 20};
+        for (int d : danhSachDuongKinh) {
+            double A1 = (M_PI * d * d) / 4.0;
+            int n = std::ceil(As_yeu_cau / A1);
+            double s = 1000.0 / n;
+            double AsCap = n * A1;
 
-        std::cout << "Sàn kê 4 cạnh (2 phương) (y/n)? ";
-        std::cin >> lua_chon;
-
-        if (lua_chon == 'y' || lua_chon == 'Y') {
-            h = std::max(0.12, Lmin / 35.0); // m
-        } else {
-            std::cout << "1. Sàn kê 2 cạnh (1 phương)\n";
-            std::cout << "2. Sàn công xôn\n";
-            std::cout << "Chọn loại sàn: ";
-            std::cin >> loaiSan;
-
-            switch (loaiSan) {
-                case 1: {
-                    std::cout << "Chọn phương chịu lực chính (1 = Lx, 2 = Ly): ";
-                    int chon; std::cin >> chon;
-                    double L = (chon == 1) ? Lx : Ly;
-                    h = L / 30.0;
-                    break;
-                }
-                case 2: {
-                    std::cout << "Chọn phương công xôn (1 = Lx, 2 = Ly): ";
-                    int chon; std::cin >> chon;
-                    double L = (chon == 1) ? Lx : Ly;
-                    h = L / 10.0;
-                    break;
-                }
-                default:
-                    std::cout << "⛔️ Lựa chọn không hợp lệ. Mặc định sàn kê 4 cạnh.\n";
-                    h = std::max(0.12, Lmin / 35.0);
+            if (s >= 80 && s <= 250) {
+                duongKinh = d;
+                soThanhTrenMet = n;
+                khoangCach = s;
+                AsCungCap = AsCap;
+                return true;
             }
         }
+        return false;
+    }
 
-        std::cout << "\n✅ Chiều dày sàn tính toán: " << h << " m (tương đương " << h * 1000 << " mm)\n";
-        return h;
+    void hienThi() const {
+        if (duongKinh == 0) {
+            std::cout << "\n⚠️ Không có phương án thép phù hợp!\n";
+            return;
+        }
+
+        std::cout << std::fixed << std::setprecision(1);
+        std::cout << "\n🔩 Đề xuất cấu hình thép sàn:\n";
+        std::cout << "   • Đường kính: ∅" << duongKinh << " mm\n";
+        std::cout << "   • Khoảng cách đặt thanh: " << khoangCach << " mm\n";
+        std::cout << "   • Diện tích As cung cấp: ≈ " << AsCungCap << " mm²/m\n";
     }
 };
 
+class San {
+    public:
+        double Lx, Ly;   // Kích thước sàn (m)
+        double q_san;       // Tải trọng sàn (kN/m2)
 
-    //         int loaiSan;
-    //         std::cout << "\nChọn loại sàn:\n"
-    //                      "1. Sàn kê 4 cạnh (2 phương)\n"
-    //                      "2. Sàn kê 2 cạnh (1 phương)\n"
-    //                      "3. Sàn công xôn\n"
-    //                      "Nhập lựa chọn (1-3): ";
-    //         std::cin >> loaiSan;
+        double h_san;
+        double q_ngan;
+        double q_dai;
+        San(double Lx_in, double Ly_in, double q_in = 7)
+            :Lx(Lx_in), Ly(Ly_in), q_san(q_in),
+            h_san(std::max(0.12, std::min(Lx_in, Ly_in) / 35)),
+            q_ngan(q_in * Lx_in / 2),
+            q_dai(q_in * Ly_in / 2) {}
+
+        void tinh_hsan_1phuong(double L_1phuong) {
+            h_san = std::max(0.12, L_1phuong / 30);
+        }
+
+        void tinh_hsan_congxon(double L_congxon) {
+            h_san = std::max(0.12, L_congxon / 10);
+        }
+
+        void tinh_thepsan() {
+            double tyLe = Lx / Ly;
+            double alpha_nhip = 0.045;
     
-    //         double h = 0.12; // m - chiều dày tối thiểu
+            if (tyLe >= 0.95) alpha_nhip = 0.045;
+            else if (tyLe >= 0.75) alpha_nhip = 0.050;
+            else alpha_nhip = 0.060;
     
-    //         switch (loaiSan) {
-    //             case 1: h = L / 35.0; break;
-    //             case 2: {
-    //                 std::cout << "Chọn phương chịu lực chính (1 = Lx, 2 = Ly): ";
-    //                 int chon; std::cin >> chon;
-    //                 L = (chon == 1) ? Lx : Ly;
-    //                 h = L / 30.0;
-    //                 break;
-    //             }
-    //             case 3: {
-    //                 std::cout << "Chọn phương công xôn (1 = Lx, 2 = Ly): ";
-    //                 int chon; std::cin >> chon;
-    //                 L = (chon == 1) ? Lx : Ly;
-    //                 h = L / 10.0;
-    //                 break;
-    //             }
-    //             default:
-    //                 std::cout << "⛔️ Lựa chọn không hợp lệ. Mặc định sàn kê 4 cạnh.\n";
-    //                 h = L / 35.0;
-    //         }
+            double M = alpha_nhip * q_san * Lx * Lx;
+            std::cout << "→ Mô men uốn giữa nhịp: " << M << " kNm\n";
     
-    //         if (h < 0.12) h = 0.12;
-    //         h = std::ceil(h * 1000) / 1000.0;
-    //         std::cout << "➡️  Chiều dày sàn đề xuất: " << h << " m (" << h * 1000 << " mm)\n";
-    //         return h;
-    //     }
+            double R = 210; // MPa
+            double h0 = h_san * 1000 - 20; // mm
+            double As = (M * 1e6) / (R * h0); // mm²/m
     
-    //     double tinh_tai_trong_san(double h_san) {
-    //         int loaiCT;
-    //         const double g2 = 2.0; // tải hoàn thiện, trần
-    //         const double lbt = 25.0; // kN/m3
-    //         double g1 = lbt * h_san;
-    //         double qsd = 2.0;
-    
-    //         std::cout << "\nChọn loại công trình:\n"
-    //                      "1. Mái không người (1.0 kN/m²)\n"
-    //                      "2. Nhà ở (2.0 kN/m²)\n"
-    //                      "3. Văn phòng (3.0 kN/m²)\n"
-    //                      "4. Hành lang công cộng (5.0 kN/m²)\n"
-    //                      "Nhập lựa chọn (1-4): ";
-    //         std::cin >> loaiCT;
-    
-    //         switch (loaiCT) {
-    //             case 1: qsd = 1.0; break;
-    //             case 2: qsd = 2.0; break;
-    //             case 3: qsd = 3.0; break;
-    //             case 4: qsd = 5.0; break;
-    //             default:
-    //                 std::cout << "Lựa chọn không hợp lệ. Mặc định nhà ở.\n";
-    //         }
-    
-    //         double q = g1 + g2 + qsd;
-    //         std::cout << "\n✅ Tổng tải trọng sàn: q = " << q << " kN/m²\n";
-    //         return q;
-    //     }
-    
-    //     void tinh_tai_len_dam(double q) {
-    //         double Q = q * Lx * Ly;
-    //         double q_ngan = q * Lx / 2.0;
-    //         double q_dai = q * Ly / 2.0;
-    
-    //         std::cout << "\n🔸 Tổng tải sàn: Q = " << Q << " kN\n";
-    //         std::cout << "🔸 Tải lên dầm NGẮN: " << q_ngan << " kN/m\n";
-    //         std::cout << "🔸 Tải lên dầm DÀI:  " << q_dai << " kN/m\n";
-    //     }
-    
-    //     void tinh_thep_san(double h_san, double q) {
-    //         double tyLe = Lx / Ly;
-    //         double alpha_nhip = 0.045;
-    
-    //         if (tyLe >= 0.95) alpha_nhip = 0.045;
-    //         else if (tyLe >= 0.75) alpha_nhip = 0.050;
-    //         else alpha_nhip = 0.060;
-    
-    //         double M = alpha_nhip * q * Lx * Lx;
-    //         std::cout << "→ Mô men uốn giữa nhịp: " << M << " kNm\n";
-    
-    //         double R = 210; // MPa
-    //         double h0 = h_san * 1000 - 20; // mm
-    //         double As = (M * 1e6) / (R * h0); // mm²/m
-    
-    //         std::cout << "➡️  Diện tích cốt thép yêu cầu As: " << std::ceil(As) << " mm²/m\n";
-    //         PhuongAnThep phuongAn = goi_y_duong_kinh_thep(As);
-    //         phuongAn.hien_thi();
-    //     }
-    // };
-    
+            std::cout << "➡️  Diện tích cốt thép yêu cầu As: " << std::ceil(As) << " mm²/m\n";
+            PhuongAnThep phuongan;
+            phuongan.goiY(As);
+            phuongan.hienThi();
+        }
+    };
+int main() {
+    San san(6, 4);
+    std::cout << "🔸 Tải lên dầm DÀI:  " << san.q_ngan << " kN/m\n";
+    san.tinh_thepsan();
+    return 0;
+}
