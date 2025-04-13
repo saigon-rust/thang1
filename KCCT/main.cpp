@@ -81,9 +81,9 @@ class San {
             double M = alpha_nhip * q_san * Lx * Lx;
             std::cout << "→ Mô men uốn giữa nhịp: " << M << " kNm\n";
     
-            double R = 210; // MPa
+            double Rs = 210; // MPa
             double h0 = h_san * 1000 - 20; // mm
-            double As = (M * 1e6) / (R * h0); // mm²/m
+            double As = (M * 1e6) / (Rs * h0); // mm²/m
     
             std::cout << "➡️  Diện tích cốt thép yêu cầu As: " << std::ceil(As) << " mm²/m\n";
             PhuongAnThep phuongan;
@@ -91,6 +91,39 @@ class San {
             phuongan.hienThi();
         }
     };
+
+class Dam {
+    public:
+        double L_dam;
+        double h_dam;
+        double R_s;
+        double R_b;
+        double Rs;
+        double Rb;
+
+        Dam(double Rs_in = 300, double Rb_in = 17)
+            :Rs(Rs_in / 1.15), Rb(Rb_in / 1.5) {}
+    };
+class AsCalculator {
+    public:
+        double Rs;   // Cường độ chịu kéo của thép (MPa)
+        double M;    // Mô men uốn (kNm)
+        double h0;   // Chiều cao làm việc (mm)
+        double j;    // Hệ số đòn bẩy (thường ≈ 0.9)
+        double As;   // Kết quả diện tích cốt thép (mm^2)
+
+        AsCalculator(double M_in, double Rs_in, double h0_in, double j_in = 0.9)
+            : M(M_in), Rs(Rs_in), h0(h0_in), j(j_in)
+        {
+            As = (M) / (Rs * j * h0);  // M đơn vị kNm → N.mm
+        }
+
+        void printValues() const {
+            std::cout << "\n--- Tính diện tích thép As (gần đúng) ---\n";
+            std::cout << "==> As ≈ " << As << " mm^2\n";
+        }
+    };
+
 int main() {
     San san(6, 4);
     std::cout << "🔸 Tải lên dầm DÀI:  " << san.q_ngan << " kN/m\n";
