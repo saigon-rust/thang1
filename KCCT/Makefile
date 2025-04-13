@@ -1,3 +1,3 @@
 all:
-	g++ cot2.cpp -o main
+	g++ tinhthepdam.cpp -o main
 	./main
