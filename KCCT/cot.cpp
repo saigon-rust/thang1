@@ -59,8 +59,8 @@ class Column {
     };
 
 int main() {
-    double Ntt = 450.0;     // kN
-    double Rb = 11.5;       // MPa (B20)
+    double Ntt = 130;     // kN
+    double Rb = 17.5;       // MPa (M300)
     double phi = 0.8;       // Hệ số an toàn
     double l0 = 3000.0;     // mm (chiều cao tầng)
 

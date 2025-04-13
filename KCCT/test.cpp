@@ -152,7 +152,7 @@ int main() {
     double h_san = san.tinh_chieu_day_san();
     double q = san.tinh_tai_trong_san(h_san);
     san.tinh_tai_len_dam(q);
-    san.tinh_thep_san(h_san, q);
+
 
     return 0;
 }
