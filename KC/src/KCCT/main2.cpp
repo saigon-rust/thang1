@@ -86,7 +86,7 @@ public:
     }
 
     double q_DS(double DS) {
-        return qsan * DS / 2;
+        return qsan * DS / 4;
     }
 
     bool goiY(double As_yeu_cau) {
@@ -209,10 +209,10 @@ int main() {
     double DS1 = 4;
     double DS2 = 2;
     Cot cotA(vatlieu);
-    cotA.tinh_RA(DS1, san.q_DS(DS1) + vatlieu.qtuong/2);
-    cotA.tinh_RA(DS1, san.q_DS(DS1) + vatlieu.qtuong/2);
-    cotA.tinh_RA(DS1, san.q_DS(DS1) + vatlieu.qtuong/2);
-    cotA.tinh_RA(DS2, san.q_DS(DS2));
+    cotA.tinh_RA(DS1, san.q_DS(4+2) + vatlieu.qtuong/2);
+    cotA.tinh_RA(DS1, san.q_DS(4+4) + vatlieu.qtuong/2);
+    cotA.tinh_RA(DS1, san.q_DS(4+2) + vatlieu.qtuong/2);
+    cotA.tinh_RA(DS2, san.q_DS(4+4));
     cotA.hienThi();
     cotA.chon_tiet_dien();
 
