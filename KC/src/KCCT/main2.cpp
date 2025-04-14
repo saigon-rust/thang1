@@ -82,7 +82,7 @@ public:
 
     San(const VatLieu& vl, double Lx_in, double Ly_in)
         : Lx(Lx_in), Ly(Ly_in), Rs(vl.Rs), Rb(vl.Rb), qsan(vl.qsan),
-        hsan(max(0.12, min(Lx_in, Ly_in) / 35.0)) {}
+        hsan(ceil(max(0.12, min(Lx_in, Ly_in) / 35.0)/0.01)*0.01) {}
 
     double q_DS(double DS) {
         return qsan * DS / 4;
@@ -128,12 +128,93 @@ public:
     void hienThi() const {
         if (duongKinh == 0) return;
         cout << fixed << setprecision(1);
-        cout << "   hsan = " << hsan << "m\n";
+        std::cout << std::fixed << std::setprecision(2) << "  hsan = " << hsan << "m\n";
         cout << "🔩 Đề xuất thép sàn:\n";
         cout << "   • ∅" << duongKinh << " mm, cách nhau " << khoangCach << " mm\n";
         cout << "   • As cung cấp ≈ " << AsCungCap << " mm²/m\n";
     }
 };
+
+class Dam {
+    private:
+        double L;      // Nhịp dầm (m)
+        double b;      // Bề rộng dầm (mm)
+        double h;      // Chiều cao dầm (mm)
+        double a;      // Lớp bảo vệ cốt thép (mm)
+        double q;      // Tải phân bố đều (kN/m)
+    
+        // Vật liệu
+        double Rb;     // Cường độ bê tông chịu nén (MPa)
+        double Rs;     // Cường độ chịu kéo cốt thép (MPa)
+        double alpha;  // Hệ số điều kiện làm việc (0.8 ~ 1.0)
+    
+    public:
+        Dam(double L_, double b_in = 200, double a_in = 25,
+            double Rb_ = 11.5, double Rs_ = 280, double alpha_ = 0.9)
+            : L(L_), b(b_), h(h_), a(a_), q(q_), Rb(Rb_), Rs(Rs_), alpha(alpha_) {}
+    
+        double tinh_Mmax() const {
+            return (q * L * L) / 8.0; // kNm
+        }
+    
+        double tinh_h0() const {
+            return h - a; // mm
+        }
+    
+        double tinh_As(double Mmax, double h0) const {
+            return (Mmax * 1e6) / (Rs * h0); // mm2
+        }
+    
+        double tinh_Mcp(double h0) const {
+            return (alpha * Rb * b * h0 * h0) / 1e6; // kNm
+        }
+    
+        void goi_y_thep(double As_required) const {
+            struct SteelBar {
+                int phi;
+                double area;
+            };
+
+            std::vector<SteelBar> bars = {
+                {10, 78.5}, {12, 113}, {14, 154}, {16, 201},
+                {18, 254}, {20, 314}, {22, 380}, {25, 491}
+            };
+    
+            std::cout << "\n--- Gợi ý bố trí thép gần đúng cho As yêu cầu: " 
+                      << std::round(As_required) << " mm² ---\n";
+            std::cout << std::left << std::setw(8) << "Φ" 
+                      << std::setw(12) << "Số lượng" 
+                      << std::setw(15) << "As thực tế" << "\n";
+    
+            for (const auto& bar : bars) {
+                int n = std::ceil(As_required / bar.area);
+                double As_actual = n * bar.area;
+                std::cout << "Φ" << std::setw(7) << bar.phi 
+                          << std::setw(12) << n 
+                          << std::setw(15) << std::round(As_actual) << "\n";
+            }
+        }
+    
+        void hien_thi() {
+            double Mmax = tinh_Mmax();       // kNm
+            double h0 = tinh_h0();           // mm
+            double As = tinh_As(Mmax, h0);   // mm2
+            double Mcp = tinh_Mcp(h0);       // kNm
+    
+            std::cout << "\n=== KẾT QUẢ TÍNH TOÁN DẦM ===\n";
+            std::cout << "Mô men uốn lớn nhất       Mmax = " << Mmax << " kNm\n";
+            std::cout << "Chiều cao hữu hiệu        h0   = " << h0 << " mm\n";
+            std::cout << "Diện tích cốt thép yêu cầu As   = " << As << " mm²\n";
+            std::cout << "Mô men kháng uốn cho phép Mcp  = " << Mcp << " kNm\n";
+    
+            if (Mmax <= Mcp)
+                std::cout << "✅ Dầm ĐẠT yêu cầu chịu uốn.\n";
+            else
+                std::cout << "❌ Dầm KHÔNG ĐẠT yêu cầu chịu uốn.\n";
+    
+            goi_y_thep(As);
+        }
+    };
 
 class Cot {
 private:
@@ -201,7 +282,7 @@ int main() {
     vatlieu.nhapVatLieu();
     vatlieu.hienThi();
 
-    double Lx = 4, Ly = 4;
+    double Lx = 4, Ly = 6;
     San san(vatlieu, Lx, Ly);
     san.tinh_thepsan();
     san.hienThi();
@@ -215,6 +296,16 @@ int main() {
     cotA.tinh_RA(DS2, san.q_DS(4+4));
     cotA.hienThi();
     cotA.chon_tiet_dien();
+
+    double L = 4.0;     // m
+    double b = 200.0;   // mm
+    double h = 300.0;   // mm
+    double a = 25.0;    // lớp bảo vệ mm
+    double q = 26.42;    // kN/m
+
+    Dam dam(vatlieu);
+    Dam dam(L, b, h, a, q);
+    dam.hien_thi();
 
     return 0;
 }
