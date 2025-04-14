@@ -80,10 +80,9 @@ public:
     double As = 0;
     double qsan;
 
-    San(const VatLieu& vl, double lx, double ly)
-        : Lx(lx), Ly(ly), Rs(vl.Rs), Rb(vl.Rb), qsan(vl.qsan){
-        hsan = max(0.12, min(Lx, Ly) / 35.0);
-    }
+    San(const VatLieu& vl, double Lx_in, double Ly_in)
+        : Lx(Lx_in), Ly(Ly_in), Rs(vl.Rs), Rb(vl.Rb), qsan(vl.qsan),
+        hsan(max(0.12, min(Lx_in, Ly_in) / 35.0)) {}
 
     double q_DS(double DS) {
         return qsan * DS / 4;
@@ -129,6 +128,7 @@ public:
     void hienThi() const {
         if (duongKinh == 0) return;
         cout << fixed << setprecision(1);
+        cout << "   hsan = " << hsan << "m\n";
         cout << "🔩 Đề xuất thép sàn:\n";
         cout << "   • ∅" << duongKinh << " mm, cách nhau " << khoangCach << " mm\n";
         cout << "   • As cung cấp ≈ " << AsCungCap << " mm²/m\n";
