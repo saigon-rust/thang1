@@ -20,7 +20,7 @@ public:
         cout << "📥 Nhập loại thép (CB300, CB400): ";
         cin >> loai_thep;
 
-        cout << "📥 Nhập loại tường (gach_the, gach_ong, gach_bong_gio, kinh): ";
+        cout << "📥 Nhập loại tường (gach_the, gach_ong, gach_rong): ";
         cin >> loai_tuong;
 
         if (loai_be_tong == "M200") R_b = 11.5;
@@ -66,11 +66,11 @@ private:
     int soThanhTrenMet = 0;
     double khoangCach = 0;
     double AsCungCap = 0;
-
-public:
-    double R_s, R_b, Rs, Rb;
+    
     double Lx, Ly;
     double q_san;
+    double R_s, R_b, Rs, Rb;
+public:
     double hsan;
     double q_ngan, q_dai;
     double As = 0;
@@ -145,21 +145,54 @@ public:
 };
 
 class Dam {
-public:
-    double L;
+private:
+    double dtuong = 0.23;
+    double htuong = 3;
+    double qtuong;
     double hdam;
     double R_s, R_b, Rs, Rb;
+    
+    double Rs;   // Cường độ chịu kéo của thép (MPa)
+    double Mmax;    // Mô men uốn (kNm)
+    double h0 = hdam - 0.025;
+    double j = 0.9;
+    double As;   // Kết quả diện tích cốt thép (mm^2)
 
-    Dam(const VatLieu &vl, double L_in, double hdam_in)
+public:
+    double q, P;
+    double Mcp, Mmax;
+    double L;
+
+    Dam(const VatLieu &vl, double L_in)
         : L(L_in), hdam(hdam_in),
-          R_s(vl.R_s), R_b(vl.R_b), Rs(vl.R_s / 1.5), Rb(vl.R_b / 1.15) {}
-
-    void hienThi() const {
-        cout << "\n--- Thông số Dầm ---\n";
-        cout << "Rs = " << Rs << " MPa\n";
-        cout << "Rb = " << Rb << " MPa\n";
-    }
-};
+          R_s(vl.R_s), R_b(vl.R_b), Rs(vl.R_s / 1.5), Rb(vl.R_b / 1.15), qtuong(vl.gamma * dtuong * htuong){}
+          
+    void nhapDam() {
+            cout << "\n---Loai dam: 2 phuong, congxon ---\n";
+            cin >> loai_dam;
+            if (loai_dam == "congxon") hdam = ceil(L/8/0.05)*0.05;
+            if (loai_dam == "2 phuong") hdam = ceil(L/15/0.05)*0.05;
+        }
+        void hienThi() const {
+            cout << "\n--- Thông số Dầm ---\n";
+            cout << "Rs = " << Rs << " MPa\n";
+            cout << "Rb = " << Rb << " MPa\n";
+            cin >> loaiDam;
+        }
+        
+        double tinhMmax() const {
+            switch (loaiDam) {
+                case 1: Mmax = (q * pow(L, 2)) / 8.0;
+                case 2: Mmax = (P * L) / 4.0;
+                case 3: Mmax = (q * pow(L, 2)) / 10.0;
+                case 4: Mmax = (q * pow(L, 2)) / 2.0;
+                case 5: Mmax = P * L;
+                default:
+                    std::cout << "Loại dầm không hợp lệ.\n";
+                    return 0.0;
+            }
+        }
+    };
 
 int main() {
     double Lx = 4;
