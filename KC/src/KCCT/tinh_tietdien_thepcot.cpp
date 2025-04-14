@@ -88,7 +88,7 @@ int main() {
     // B1. Tính tổng tải trọng lên cột D
     double qdam = tinh_qdam(4);
     double qtuong = tinh_qtuong();
-    double RD = tinh_RA(4, qdam + qtuong) * 3 + tinh_RA(4, tinh_qdam(2)); // tổng 3 dầm + 1 ô 2m
+    double RD = tinh_RA(4, qdam + qtuong) * 3 + tinh_RA(2, tinh_qdam(2)); // tổng 3 dầm + 1 ô 2m
 
     cout << fixed << setprecision(2);
     cout << "📌 Tong tai trong tac dung len cot D: " << RD << " kN\n";
