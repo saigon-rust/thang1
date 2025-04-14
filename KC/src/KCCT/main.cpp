@@ -139,10 +139,6 @@ public:
     }
 };
 
-#include <iostream>
-#include <cmath>
-#include <iomanip>
-
 class Dam {
 private:
     double b;      // Bề rộng dầm (mm)
@@ -165,7 +161,7 @@ public:
         double Mmax = Mq + Mp;               // kNm
 
         // 2. Chiều cao sơ bộ dầm và chiều cao hữu hiệu
-        double h = ceil((L * 1000.0) / 15 / 50)*50;      // mm (giả thiết h = L/10)
+        double h = ceil((L * 1000.0) / 12 / 50)*50;      // mm (giả thiết h = L/10)
         double h0 = h - 25;                   // mm
 
         // 3. Diện tích thép yêu cầu
