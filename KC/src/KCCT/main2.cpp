@@ -6,6 +6,11 @@
 
 using namespace std;
 
+struct SteelBar {
+    int phi;       // Đường kính (mm)
+    double area;   // Diện tích (mm²)
+};
+
 class VatLieu {
 public:
     string loai_be_tong, loai_thep, loai_tuong;
@@ -144,6 +149,7 @@ private:
     double Rb;     // Cường độ bê tông (MPa)
     double Rs;     // Cường độ chịu kéo của thép (MPa)
     double alpha;  // Hệ số giảm mô men cho phép (0.8 - 1.0)
+    double As;
 
 public:
     Dam(const VatLieu& vl, double b_in = 200, double alpha_in = 0.9)
@@ -159,11 +165,11 @@ public:
         double Mmax = Mq + Mp;               // kNm
 
         // 2. Chiều cao sơ bộ dầm và chiều cao hữu hiệu
-        double h = (L * 1000.0) / 10.0;      // mm (giả thiết h = L/10)
-        double h0 = h - a;                   // mm
+        double h = ceil((L * 1000.0) / 15 / 50)*50;      // mm (giả thiết h = L/10)
+        double h0 = h - 25;                   // mm
 
         // 3. Diện tích thép yêu cầu
-        double As = (Mmax * 1e6) / (Rs * h0);  // mm²
+        As = (Mmax * 1e6) / (Rs * h0);  // mm²
 
         // 4. Mô men cho phép Mcp
         double Mcp = alpha * Rb * b * h0 * h0 / 1e6;  // kNm
@@ -180,6 +186,26 @@ public:
 
         // 6. Kiểm tra an toàn
         std::cout << "=> " << ((Mmax <= Mcp) ? "✅ Dầm đạt yêu cầu chịu uốn." : "❌ KHÔNG đạt yêu cầu chịu uốn.") << "\n";
+    }
+    void hienThi() {
+        std::vector<SteelBar> bars = {
+            {10, 78.5}, {12, 113}, {14, 154}, {16, 201},
+            {18, 254}, {20, 314}, {22, 380}, {25, 491}
+        };
+
+        std::cout << "\n--- Gợi ý bố trí thép gần đúng cho As yêu cầu: "
+                  << std::round(As) << " mm² ---\n";
+        std::cout << std::left << std::setw(8) << "Φ"
+                  << std::setw(12) << "Số lượng"
+                  << std::setw(15) << "As thực tế" << "\n";
+
+        for (const auto& bar : bars) {
+            int n = std::ceil(As / bar.area);
+            double As_actual = n * bar.area;
+            std::cout << "Φ" << std::setw(7) << bar.phi
+                      << std::setw(12) << n
+                      << std::setw(15) << std::round(As_actual) << "\n";
+        }
     }
 };
 
@@ -267,7 +293,7 @@ int main() {
 
     Dam dam(vatlieu);
     dam.tinh_As(DS1, san.q_DS(DS1*2) + vatlieu.qtuong/2);
-    // dam.hien_thi();
+    dam.hienThi();
 
     return 0;
 }
