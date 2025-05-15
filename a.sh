@@ -3,3 +3,4 @@ mkdir -p /mnt/lfs
 sudo useradd -m -g lfs -s /bin/bash lfs
 sudo passwd lfs
 su - lfs
+ssss
