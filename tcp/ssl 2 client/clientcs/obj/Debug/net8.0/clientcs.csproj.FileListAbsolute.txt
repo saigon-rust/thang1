@@ -1,0 +1,30 @@
+/workspaces/thang/thang1/tcp/ssl/clientcs/bin/Debug/net8.0/clientcs
+/workspaces/thang/thang1/tcp/ssl/clientcs/bin/Debug/net8.0/clientcs.deps.json
+/workspaces/thang/thang1/tcp/ssl/clientcs/bin/Debug/net8.0/clientcs.runtimeconfig.json
+/workspaces/thang/thang1/tcp/ssl/clientcs/bin/Debug/net8.0/clientcs.dll
+/workspaces/thang/thang1/tcp/ssl/clientcs/bin/Debug/net8.0/clientcs.pdb
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/clientcs.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/clientcs.AssemblyInfoInputs.cache
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/clientcs.AssemblyInfo.cs
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/clientcs.csproj.CoreCompileInputs.cache
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/clientcs.sourcelink.json
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/clientcs.dll
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/refint/clientcs.dll
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/clientcs.pdb
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/clientcs.genruntimeconfig.cache
+/workspaces/thang/thang1/tcp/ssl/clientcs/obj/Debug/net8.0/ref/clientcs.dll
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/bin/Debug/net8.0/clientcs
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/bin/Debug/net8.0/clientcs.deps.json
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/bin/Debug/net8.0/clientcs.runtimeconfig.json
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/bin/Debug/net8.0/clientcs.dll
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/bin/Debug/net8.0/clientcs.pdb
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/clientcs.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/clientcs.AssemblyInfoInputs.cache
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/clientcs.AssemblyInfo.cs
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/clientcs.csproj.CoreCompileInputs.cache
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/clientcs.sourcelink.json
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/clientcs.dll
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/refint/clientcs.dll
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/clientcs.pdb
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/clientcs.genruntimeconfig.cache
+/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/Debug/net8.0/ref/clientcs.dll
