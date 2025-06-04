@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/workspaces/thang/thang1/tcp/ssl copy/clientcs/clientcs.csproj",
+      "projectUniqueName": "/workspaces/thang/thang1/tcp/ssl 2 client/clientcs/clientcs.csproj",
       "projectName": "clientcs",
-      "projectPath": "/workspaces/thang/thang1/tcp/ssl copy/clientcs/clientcs.csproj",
+      "projectPath": "/workspaces/thang/thang1/tcp/ssl 2 client/clientcs/clientcs.csproj",
       "packagesPath": "/home/codespace/.nuget/packages/",
-      "outputPath": "/workspaces/thang/thang1/tcp/ssl copy/clientcs/obj/",
+      "outputPath": "/workspaces/thang/thang1/tcp/ssl 2 client/clientcs/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/codespace/.nuget/NuGet/NuGet.Config"
