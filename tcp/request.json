@@ -1,19 +1,19 @@
 {
-  "id": 123,
-  "exp": 1717600000,
-  "content": "NỘI DUNG GỬI",
-  "token": {
-    "2": {
-      "12": {
-        "1": 0,
-        "2": 7,
-        "5": 4
-      },
-      "123": {
-        "1": 2
-      },
-      "112": {
-        "1": 1
+  "method": "POST",
+  "route": "/data/session",
+  "headers": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "userid": 12
+  },
+  "body": {
+    "id": 123,
+    "exp": 1717600000,
+    "playload": "NỘI DUNG GỬI",
+    "session": {
+      "2": {
+        "12": { "1": 0, "2": 7, "5": 4 },
+        "123": { "1": 2 },
+        "112": { "1": 1 }
       }
     }
   }

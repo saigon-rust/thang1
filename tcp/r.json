@@ -1,0 +1,15 @@
+{
+  "method": "POST",
+  "route": "/data",
+  "headers": {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer <token>"
+  },
+  "body": {
+    "DatabaseId": 1,
+    "Schema": 1,
+    "Table": 1,
+    "Columns": 5,
+    "UserId": 42
+  }
+}
