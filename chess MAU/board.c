@@ -1,7 +1,15 @@
 // board.c
 #include "board.h"
 #include <stdio.h>
+#include <stdlib.h> // <-- Thêm thư viện này
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
+// Các mã ANSI escape codes cho màu sắc
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_BLUE    "\x1b[34m" // Dùng màu xanh cho quân đen để dễ nhìn hơn trên terminal
+#define ANSI_COLOR_RESET   "\x1b[0m"
 void initializeBoard(Board board) {
     // Đặt tất cả về EMPTY trước
     for (int r = 0; r < BOARD_ROWS; r++) {
@@ -73,12 +81,25 @@ const char* getPieceSymbol(PieceType type) {
 }
 
 void printBoard(const Board board) {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+
     printf("\n   a  b  c  d  e  f  g  h  i\n");
     printf("  ---------------------------\n");
     for (int r = 0; r < BOARD_ROWS; r++) {
-        printf("%2d|", 9 - r); // Đánh số hàng từ 9 xuống 0 (từ trên xuống dưới)
+        printf("%2d|", 9 - r);
         for (int c = 0; c < BOARD_COLS; c++) {
-            printf("%s", getPieceSymbol(board[r][c].type));
+            Piece currentPiece = board[r][c];
+            if (currentPiece.color == RED) {
+                printf(ANSI_COLOR_RED "%s" ANSI_COLOR_RESET, getPieceSymbol(currentPiece.type));
+            } else if (currentPiece.color == BLACK) {
+                printf(ANSI_COLOR_BLUE "%s" ANSI_COLOR_RESET, getPieceSymbol(currentPiece.type));
+            } else {
+                printf("%s", getPieceSymbol(currentPiece.type)); // Quân trống không màu
+            }
         }
         printf("|\n");
     }
