@@ -75,4 +75,4 @@ int main() {
     return 0;
 }
 
-//gcc -o chess main.c game.c board.c util.c move_validation.c ai.c -lm
+//gcc -o chess main.c game.c board.c util.c move_validation.c ai.c -lm -pthread
