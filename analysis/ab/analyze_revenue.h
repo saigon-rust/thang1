@@ -1,8 +1,6 @@
 #ifndef ANALYZE_REVENUE_H
 #define ANALYZE_REVENUE_H
 
-#include "sales_stats.h"
-
 // Tổng hợp doanh thu theo ngày trong tháng (1–31)
 void analyze_revenue_by_day_of_month(SalesData* data, int count) {
     int sum[DAYS_IN_MONTH] = {0};
@@ -125,3 +123,9 @@ void analyze_revenue_by_year(SalesData* data, int count) {
 }
 
 #endif //ANALYZE_REVENUE_H
+
+// analyze_revenue_by_day_of_month(sales_data, SALES_DATA_COUNT);
+// analyze_revenue_by_weekday(sales_data, SALES_DATA_COUNT);
+// analyze_revenue_by_month(sales_data, SALES_DATA_COUNT);
+// analyze_revenue_by_quarter(sales_data, SALES_DATA_COUNT);
+// analyze_revenue_by_year(sales_data, SALES_DATA_COUNT);
