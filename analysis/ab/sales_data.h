@@ -1,3 +1,4 @@
+//sales_data.h
 #ifndef SALES_DATA_H
 #define SALES_DATA_H
 
@@ -36,8 +37,5 @@ SaleRecord campaigns[] = {
 };
 
 int NUM_CAMPAIGNS = sizeof(campaigns) / sizeof(SaleRecord);
-
-#define MATRIX_COLS (3 + BASE_COLUMNS + NUM_CAMPAIGNS)
-int matrix_data[SALES_DATA_COUNT][MATRIX_COLS];
 
 #endif // SALES_DATA_H
