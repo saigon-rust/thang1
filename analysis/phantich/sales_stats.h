@@ -1,7 +1,6 @@
 //sales_stats.h
 #ifndef SALES_STATS_H
 #define SALES_STATS_H
-
 #define _XOPEN_SOURCE 700
 
 #include <stdio.h>
@@ -9,14 +8,12 @@
 #include <string.h>
 #include <time.h>
 
+//==========================
 #define DAYS_IN_WEEK       7
 #define DAYS_IN_MONTH     31
 #define MONTHS_IN_YEAR    12
 #define QUARTERS_IN_YEAR   4
-#define MAX_CAMPAIGNS    100
-
 #define BASE_COLUMNS  (DAYS_IN_WEEK + DAYS_IN_MONTH + MONTHS_IN_YEAR + QUARTERS_IN_YEAR)
-#define STATS_ROWS     1000
 
 typedef struct {
     int product_id;
@@ -32,6 +29,9 @@ typedef struct {
     char campaign[64];
 } SaleRecord;
 
+//==========================
+#define MAX_CAMPAIGNS    100
+#define STATS_ROWS      1000
 int stats[STATS_ROWS][BASE_COLUMNS + MAX_CAMPAIGNS] = {0};
 
 // ==== Hàm hỗ trợ thời gian ====
