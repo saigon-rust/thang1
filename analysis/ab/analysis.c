@@ -84,7 +84,7 @@ typedef enum {Q1, Q2, Q3, Q4
 
 typedef struct {
     int campaign_id
-    char date_start[11];          // Định dạng "YYYY-MM-DD"
+    char date_start[11];          // Định dạng "DD/MM/YYYY"
     char date_end[11];
     char campaign[64];      // Tên chiến dịch bán hàng
 } SaleRecord;

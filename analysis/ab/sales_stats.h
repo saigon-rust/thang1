@@ -25,7 +25,15 @@ typedef struct {
     char campaign[64];
 } SaleRecord;
 
+typedef struct {
+    int product_id;
+    char date[11];      // yyyy-mm-dd
+    int units;
+    int revenue;
+} SalesData;
+
 int stats[STATS_ROWS][MAX_STATS_COLS] = {0};
+SalesData stats_data[STATS_ROWS];  // lưu thông tin sản phẩm tương ứng
 
 // ==== Hàm hỗ trợ ====
 
@@ -54,25 +62,32 @@ void set_stats_row_base(int row, const char* date_str) {
     get_time_indices(date_str, &w, &d, &m, &q);
     if (w < 0 || d < 0 || m < 0 || q < 0 || row >= STATS_ROWS) return;
 
-    stats[row][w]                         = 1;                              // WDAY
-    stats[row][DAYS_IN_WEEK + d]         = 1;                              // DAY
-    stats[row][DAYS_IN_WEEK + DAYS_IN_MONTH + m] = 1;                      // MONTH
-    stats[row][DAYS_IN_WEEK + DAYS_IN_MONTH + MONTHS_IN_YEAR + q] = 1;    // QUARTER
+    stats[row][w]                         = 1;
+    stats[row][DAYS_IN_WEEK + d]         = 1;
+    stats[row][DAYS_IN_WEEK + DAYS_IN_MONTH + m] = 1;
+    stats[row][DAYS_IN_WEEK + DAYS_IN_MONTH + MONTHS_IN_YEAR + q] = 1;
 }
 
 void set_campaign_column(int row, int campaign_index) {
-    stats[row][BASE_COLUMNS + campaign_index] = 1;  // đánh dấu ngày nằm trong chiến dịch i
+    stats[row][BASE_COLUMNS + campaign_index] = 1;
 }
 
 void print_stats_header(int num_campaigns) {
-    for (int i = 0; i < DAYS_IN_WEEK; i++)        printf("WDAY_%d,", i);    // 0–6
-    for (int i = 0; i < DAYS_IN_MONTH; i++)       printf("DAY_%02d,", i+1);
-    for (int i = 0; i < MONTHS_IN_YEAR; i++)      printf("MONTH_%02d,", i+1);
-    for (int i = 0; i < QUARTERS_IN_YEAR; i++)    printf("Q%d,", i+1);
-    for (int i = 0; i < num_campaigns; i++)       printf("IN_CAMPAIGN_%d%c", i+1, i == num_campaigns - 1 ? '\n' : ',');
+    printf("ProductID,Units,Revenue,Date,");
+    for (int i = 0; i < DAYS_IN_WEEK; i++)        printf("WDAY_%d,", i);
+    for (int i = 0; i < DAYS_IN_MONTH; i++)       printf("DAY_%02d,", i + 1);
+    for (int i = 0; i < MONTHS_IN_YEAR; i++)      printf("MONTH_%02d,", i + 1);
+    for (int i = 0; i < QUARTERS_IN_YEAR; i++)    printf("Q%d,", i + 1);
+    for (int i = 0; i < num_campaigns; i++)       printf("IN_CAMPAIGN_%d%c", i + 1, i == num_campaigns - 1 ? '\n' : ',');
 }
 
 void print_stats_row(int row, int total_cols) {
+    printf("%d,%d,%d,%s,", 
+        stats_data[row].product_id,
+        stats_data[row].units,
+        stats_data[row].revenue,
+        stats_data[row].date);
+
     for (int i = 0; i < total_cols; i++) {
         printf("%d", stats[row][i]);
         if (i < total_cols - 1) printf(",");
