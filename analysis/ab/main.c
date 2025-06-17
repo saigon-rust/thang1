@@ -1,8 +1,6 @@
-#include "sales_data.h"
-#include "analyze_revenue.h"
-
+#include "forecast_linear.h"
 
 int main() {
-    analyze_revenue_by_day_of_month(sales_data, SALES_DATA_COUNT);
+    forecast_linear();
     return 0;
 }
