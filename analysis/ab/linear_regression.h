@@ -6,9 +6,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include "sales_data.h"
 
 #define MAX_FEATURES  64      // số chiều đầu vào (thay đổi theo input)
-#define MAX_SAMPLES   100     // số dòng dữ liệu tối đa
+#define MAX_SAMPLES   STATS_ROWS     // số dòng dữ liệu tối đa
 #define EPOCHS        1000
 #define LEARNING_RATE 0.01
 

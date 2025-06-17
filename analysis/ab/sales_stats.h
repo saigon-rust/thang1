@@ -1,4 +1,4 @@
-//sales_stats
+//sales_stats.h
 #ifndef SALES_STATS_H
 #define SALES_STATS_H
 
