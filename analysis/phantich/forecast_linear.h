@@ -1,3 +1,6 @@
+#ifndef FORECAST_LINEAR_H
+#define FORECAST_LINEAR_H
+
 #include "sales_data.h"
 #include "linear_regression.h"
 
@@ -118,5 +121,5 @@ void forecast_linear() {
     printf("-----------------------------------\n");
     printf("📈 Tổng doanh thu dự đoán: %.2f\n", total_revenue);
 }
-
+#endif //FORECAST_LINEAR_H
 //forecast_linear();

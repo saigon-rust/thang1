@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 
-//==========================
+//==============>sales_stats
 #define DAYS_IN_WEEK       7
 #define DAYS_IN_MONTH     31
 #define MONTHS_IN_YEAR    12
@@ -29,10 +29,10 @@ typedef struct {
     char campaign[64];
 } SaleRecord;
 
-//==========================
-#define MAX_CAMPAIGNS    100
-#define STATS_ROWS      1000
-int stats[STATS_ROWS][BASE_COLUMNS + MAX_CAMPAIGNS] = {0};
+//==============================
+#define CAMPAIGNS_COLUMNS    100
+#define STATS_ROWS          1000
+int stats[STATS_ROWS][BASE_COLUMNS + CAMPAIGNS_COLUMNS] = {0};
 
 // ==== Hàm hỗ trợ thời gian ====
 
